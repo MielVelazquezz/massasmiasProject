@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Pratos - Massas Mias</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/adm/css/style.css">
+    <link rel="stylesheet" href="../css/styleresponsive.css">
+    <style>
+        body {
+            background-color: #663E2C;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="card-cad">
+            <img src="/static/images/massasmias.png" alt="Massas Mias Logo" class="logo">
+            <div class="card-header">
+                Atualização de Pratos
+            </div>
+            <form id="atualizar-prato-form" enctype="multipart/form-data">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="nome" class="form-label">Nome do prato:</label>
+                        <input type="text" class="form-control" id="nome" placeholder="Digite o nome do prato" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tipo" class="form-label">Tipo:</label>
+                        <select class="form-control" id="tipo" required>
+                            <option selected>Escolha o tipo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="descricao" class="form-label">Descrição:</label>
+                        <input type="text" class="form-control" id="descricao" placeholder="Descreva o prato" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="imagem" class="form-label">Imagem:</label>
+                        <input type="file" class="form-control" id="imagem">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="valor" class="form-label">Valor:</label>
+                        <input type="number" class="form-control" id="valor" placeholder="Digite o valor" required step="0.01">
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-custom">Atualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const idPrato = urlParams.get('id');
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await carregarCategorias();
+            await carregarDadosPrato(idPrato);
+        });
+
+        async function carregarCategorias() {
+            try {
+                const response = await fetch('http://localhost:8000/categorias_prato'); 
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar as categorias');
+                }
+
+                const data = await response.json();
+                const categorias = data.categorias_prato; 
+
+                const tipoSelect = document.getElementById('tipo');
+                tipoSelect.innerHTML = '';
+
+                const optionDefault = document.createElement('option');
+                optionDefault.text = 'Escolha o tipo';
+                optionDefault.value = '';
+                tipoSelect.add(optionDefault);
+
+                if (Array.isArray(categorias)) {
+                    categorias.forEach(categoria => {
+                        const option = document.createElement('option');
+                        option.value = categoria.id_categoria_prato; 
+                        option.text = categoria.nome_categoria_prato; 
+                        tipoSelect.add(option);
+                    });
+                } else {
+                    console.error('Categorias não é um array:', categorias);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert("Não foi possível carregar as categorias.");
+            }
+        }
+
+        async function carregarDadosPrato(id) {
+    try {
+        const response = await fetch(`http://localhost:8000/pratos/${id}`);
+        if (!response.ok) {
+            throw new Error('Erro ao carregar os dados do prato');
+        }
+
+        const prato = await response.json();
+        document.getElementById('nome').value = prato.nome_prato;
+        document.getElementById('descricao').value = prato.descricao_prato;
+        document.getElementById('valor').value = prato.valor_prato;
+
+        // Atualiza o campo de tipo com o ID da categoria
+        document.getElementById('tipo').value = prato.id_categoria_prato.id_categoria_prato;
+
+    } catch (error) {
+        console.error('Erro:', error);
+        alert("Não foi possível carregar os dados do prato. Verifique a conexão com a API.");
+    }
+}
+
+
+        document.getElementById('atualizar-prato-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const nome = document.getElementById('nome').value;
+            const descricao = document.getElementById('descricao').value;
+            const valor = parseFloat(document.getElementById('valor').value);
+            const tipo = document.getElementById('tipo').value;
+            let imagem = document.getElementById('imagem').files[0];
+
+            const formData = new FormData();
+            formData.append('nome_prato', nome);
+            formData.append('descricao_prato', descricao);
+            formData.append('valor_prato', valor);
+            formData.append('id_categoria_prato', tipo);
+            if (imagem) {
+                formData.append('imagem_prato', imagem);
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8000/pratos/${idPrato}`, {
+                    method: 'PATCH',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erro ao atualizar o prato');
+                }
+
+                window.location.href = 'http://localhost:8000/massas-mias/admin/pratos';
+            } catch (error) {
+                console.error('Erro:', error);
+                alert("Não foi possível atualizar o prato. Verifique a conexão com a API.");
+            }
+        });
+    </script>
+</body>
+</html>

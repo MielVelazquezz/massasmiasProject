@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Massas Mias</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/home.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <!-- <link rel="icon" href="/static/images/favicon.ico"> -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <script src="https://kit.fontawesome.com/c8e4d183c2.js" crossorigin="anonymous"></script>
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+
+        .dancing-script {
+            font-family: "Dancing Script", cursive;
+            font-optical-sizing: auto;
+            font-weight: 300;
+            font-style: normal;
+        }
+    </style>
+    <link rel="stylesheet" href="/static/css/pizza.css">
+
+</head>
+
+<body>
+    <header class="header_home">
+        <div class="header-content">
+            <nav>
+                <a href="#nossa-historia">Nossa história</a>
+                <a href="#reserva">Reservas</a>
+            </nav>
+            <a href="/massas-mias/home"><img src="/static/images/massasmias-sem-fundo.png" alt="Massas Mias Logo"
+                    class="logo"></a>
+            <nav>
+                <a href="#contato">Contatos</a>
+                <a href="#informacoes">Informações</a>
+            </nav>
+            <div class="exit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-box-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0z" />
+                    <path fill-rule="evenodd"
+                        d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708z" />
+                </svg>
+            </div>
+            <div class="user">
+                <p>Olá <span id="nomeUsuario">Visitante</span>!</p>
+            </div>
+
+            <div class="cart-icon" onclick="toggleSidebar()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart2"
+                    viewBox="0 0 16 16">
+                    <path
+                        d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5M3.14 5l1.25 5h8.22l1.25-5zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0" />
+                </svg>
+            </div>
+
+            <div class="cartSide" id="cartSidebar">
+                <button class="close-btn" onclick="toggleSidebar()"><svg xmlns="http://www.w3.org/2000/svg" width="15"
+                        height="15" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path
+                            d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                    </svg></button>
+                <h2>Carrinho de Compras</h2>
+                <div id="cartContent">
+                    <p>Seu carrinho está vazio.</p>
+                </div>
+                <div class="contemTotal">
+                    <div id="cartTotal">Total: R$ 0,00</div>
+                    <button id="payButton" onclick="pagarCarrinho()">Pagar</button>
+                </div>
+            </div>
+
+
+        </div>
+
+    </header>
+
+    <div class="banner">
+        <h1>Sabores da culinária Italiana</h1>
+
+    </div>
+
+    <main>
+
+        <!-- Seção Nossa história -->
+        <section class="nossa-historia" id="nossa-historia">
+
+            <div class="container">
+                <div class="texto">
+                    <p class="nh">Nossa história</p>
+                    <h2>Bem vindo ao Massas Mias</h2>
+                    <p>Inaugurado em 2010 no coração de Florença, o "Massas Mias" nasceu da paixão de cinco amigos por
+                        compartilhar os autênticos sabores da culinária italiana. Com ingredientes frescos e receitas
+                        tradicionais , nosso objetivo sempre foi proporcionar uma experiência gastronômica que faça você
+                        se
+                        sentir em casa.</p>
+                    <p>Ao longo dos anos, construímos uma relação especial com nossos clientes, oferecendo um
+                        atendimento
+                        acolhedor e pratos que celebram a verdadeira essência da Itália. Cada detalhe, desde os pães e
+                        massas até as sobremesas, é preparado com cuidado em nossa cozinha, garantindo um padrão de
+                        qualidade excepcional.</p>
+
+                    <img src="/static/images/grupo.png" alt="" class="grupo">
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção cardápio -->
+        <section class="cardapio" id="cardapio">
+            <h1 class="dancing-script">Cardápio</h1>
+            <div id="filtro-container">
+                <div class="filtro">
+                    <input type="text" id="searchInput" placeholder="Pesquisar por nome" onkeyup="filtrarPratos()"
+                        class="pesquisa">
+                </div>
+                <div class="filtro">
+                    <select id="categoryFilter" onchange="filtrarPratos()">
+                        <option value="">Filtrar por categoria</option>
+                    </select>
+                </div>
+            </div>
+            <div id="pratos-container"></div>
+        </section>
+
+        <!-- Seção reserva -->
+        <section class="reserva reserva-section" id="reserva">
+            <h1 class="dancing-script">Reservas</h1>
+            <p>
+                Você pode fazer sua reserva através do Telefone (18) 99757-7073. Vale lembrar que nossas reservas para o
+                jantar vão até as 20h30 e para o almoço, até as 13h30.
+            </p>
+
+            <a href="/massas-mias/reservas">
+                <div class="reserva-container">
+                    <img src="/static/images/massasmias-sem-fundo.png" alt="Massa Mia">
+                    <div>
+                        <p>
+                            Fazer reserva de mesa e escolha a data e venha ao restaurante
+                            <img src="/static/images/mesa.png" alt="fazer reserva">
+
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </section>
+
+        <!-- Seção info -->
+
+
+        <section class="info-section" id="contato">
+            <h1 class="dancing-script">Contato</h1>
+            <div class="section-content">
+                <h2>Horário de Funcionamento</h2>
+                <p>Aberto de terça a domingo!</p>
+                <p>Terça e Quarta 12h às 23h | Quinta 12h à 0h | Sexta e
+                    Sábado 12h à 1h</p>
+                <hr>
+                <h2>Onde estamos</h2>
+
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3693.2859358716128!2d-51.3184652249328!3d-22.229227379737733!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x949475d0750b1b3d%3A0x86a2c97c517c8093!2sEscola%20Sesi%20de%20Regente%20Feij%C3%B3%20-%20CE%20368!5e0!3m2!1spt-BR!2sbr!4v1731505050859!5m2!1spt-BR!2sbr"
+                    width="710" height="250" style="border:0;" allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade" class="localizacao"></iframe>
+
+            </div>
+            <!-- <div class="section-content"> -->
+            <div class="main-content">
+                <div class="up">
+                    <button class="card1" onclick="window.location='https://www.instagram.com/'">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                            viewBox="0,0,256,256" width="45px" height="45px" fill-rule="nonzero" class="instagram">
+                            <g fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
+                                font-family="none" font-weight="none" font-size="none" text-anchor="none"
+                                style="mix-blend-mode: normal">
+                                <g transform="scale(8,8)">
+                                    <path
+                                        d="M11.46875,5c-3.55078,0 -6.46875,2.91406 -6.46875,6.46875v9.0625c0,3.55078 2.91406,6.46875 6.46875,6.46875h9.0625c3.55078,0 6.46875,-2.91406 6.46875,-6.46875v-9.0625c0,-3.55078 -2.91406,-6.46875 -6.46875,-6.46875zM11.46875,7h9.0625c2.47266,0 4.46875,1.99609 4.46875,4.46875v9.0625c0,2.47266 -1.99609,4.46875 -4.46875,4.46875h-9.0625c-2.47266,0 -4.46875,-1.99609 -4.46875,-4.46875v-9.0625c0,-2.47266 1.99609,-4.46875 4.46875,-4.46875zM21.90625,9.1875c-0.50391,0 -0.90625,0.40234 -0.90625,0.90625c0,0.50391 0.40234,0.90625 0.90625,0.90625c0.50391,0 0.90625,-0.40234 0.90625,-0.90625c0,-0.50391 -0.40234,-0.90625 -0.90625,-0.90625zM16,10c-3.30078,0 -6,2.69922 -6,6c0,3.30078 2.69922,6 6,6c3.30078,0 6,-2.69922 6,-6c0,-3.30078 -2.69922,-6 -6,-6zM16,12c2.22266,0 4,1.77734 4,4c0,2.22266 -1.77734,4 -4,4c-2.22266,0 -4,-1.77734 -4,-4c0,-2.22266 1.77734,-4 4,-4z">
+                                    </path>
+                                </g>
+                            </g>
+                        </svg>
+                    </button>
+                    <button class="card2" onclick="window.location='https://x.com/'">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="45px" height="45px"
+                            class="twitter">
+                            <path
+                                d="M42,12.429c-1.323,0.586-2.746,0.977-4.247,1.162c1.526-0.906,2.7-2.351,3.251-4.058c-1.428,0.837-3.01,1.452-4.693,1.776C34.967,9.884,33.05,9,30.926,9c-4.08,0-7.387,3.278-7.387,7.32c0,0.572,0.067,1.129,0.193,1.67c-6.138-0.308-11.582-3.226-15.224-7.654c-0.64,1.082-1,2.349-1,3.686c0,2.541,1.301,4.778,3.285,6.096c-1.211-0.037-2.351-0.374-3.349-0.914c0,0.022,0,0.055,0,0.086c0,3.551,2.547,6.508,5.923,7.181c-0.617,0.169-1.269,0.263-1.941,0.263c-0.477,0-0.942-0.054-1.392-0.135c0.94,2.902,3.667,5.023,6.898,5.086c-2.528,1.96-5.712,3.134-9.174,3.134c-0.598,0-1.183-0.034-1.761-0.104C9.268,36.786,13.152,38,17.321,38c13.585,0,21.017-11.156,21.017-20.834c0-0.317-0.01-0.633-0.025-0.945C39.763,15.197,41.013,13.905,42,12.429">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="down">
+                    <button class="card3" onclick="window.location='https://www.facebook.com/'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" fill="currentColor"
+                            class="bi bi-facebook facebook" viewBox="0 0 16 16">
+                            <path
+                                d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951" />
+                        </svg>
+                    </button>
+                    <button class="card4" onclick="window.location='https://whatsa.me/5518997376495'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" fill="currentColor"
+                            class="bi bi-whatsapp whatsapp" viewBox="0 0 16 16">
+                            <path
+                                d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            </div>
+
+            <audio id="bgMusic" autoplay>
+                <source src="/static/images/musica.mp3" type="audio/mpeg">
+                <!-- Seu navegador não suporta áudio. -->
+            </audio>
+
+            <!-- Modal de Alerta para Visitante -->
+            <div id="visitorAlertModal" class="modal">
+                <div class="modal-content">
+                    <span class="close-button" id="closeModalButton">&times;</span>
+                    <h2>Visitantes não podem realizar pagamentos.</h2>
+                    <p>Desculpe, você precisa estar logado para poder realizar compras.</p>
+                </div>
+            </div>
+
+            <div id="successMessage" class="hidden">
+                <div class="message-content">
+                    <p>Compra realizada com sucesso!</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer id="informacoes">
+
+
+
+        <div class="container__footer">
+            <div class="box__footer">
+                <div class="terms">
+                    <div class="main">
+                    </div>
+
+                    <img src="/static/images/massasmias-sem-fundo.png" alt="Massas Mias Logo">
+
+                </div>
+            </div>
+            <div class="box__footer" id="solucoes">
+                <h2>Soluções</h2>
+                <a href="#"><i class="fa fa-envelope"></i> Email FontCode</a>
+            </div>
+
+            <div class="box__footer">
+                <h2>Empresa</h2>
+                <a href="#nossa-historia">Sobre</a>
+                <a href="#">Trabalhe Conosco</a>
+                <a href="#">Serviços</a>
+            </div>
+
+            <div class="box__footer">
+                <h2>Redes Sociais</h2>
+                <a href="#"><i class="fab fa-instagram-square"></i> Instagram</a>
+                <a href="#"> <i class="fab fa-facebook-square"></i> Facebook</a>
+                <a href="#"><i class="fab fa-twitter-square"></i> Twitter</a>
+                <a href="#"><i class="fab fa-whatsapp"></i> Whatsapp</a>
+            </div>
+
+        </div>
+
+        <div class="box__copyright">
+            <hr>
+            <p>Todos os direitos reservados © 2024 <b>FontCode</b></p>
+        </div>
+    </footer>
+
+    <!-- <script src="/static/estrelinhas.js"></script> -->
+    <div id="loading" style="display: none;">Carregando...</div>
+    <div id="nomeUsuario"></div>
+
+
+    <script>
+        const audio = document.getElementById('bgMusic');
+        audio.volume = 0.2;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById("cartSidebar");
+            sidebar.classList.toggle("show");
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("access_token");
+
+            if (!token) {
+                window.location.href = "/massas-mias/home";
+            }
+
+            carregarCategorias();
+            carregarPratos();
+
+            let idUser; // Definindo idUser fora da função para ser acessível globalmente
+
+            async function fetchUserData() {
+                try {
+                    const response = await fetch("http://localhost:8000/usuarios/me/", {
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Erro ao buscar dados do usuário");
+                    }
+
+                    const data = await response.json();
+                    const nomeUsuarioElement = document.getElementById("nomeUsuario");
+
+                    if (nomeUsuarioElement) {
+                        nomeUsuarioElement.textContent = data.nome;
+                    }
+
+                    // Atribuindo o ID do usuário à variável global
+                    idUser = data.id_usuario;
+
+                } catch (error) {
+                    console.error("Falha ao buscar dados do usuário:", error);
+                }
+            }
+
+            fetchUserData();
+
+            async function carregarCategorias() {
+                try {
+                    const response = await fetch("http://localhost:8000/categorias_prato");
+                    const data = await response.json();
+                    const categoriaFilter = document.getElementById("categoryFilter");
+
+                    categoriaFilter.innerHTML = '<option value="">Todos os pratos</option>';
+                    data.categorias_prato.forEach((categoria) => {
+                        const option = document.createElement("option");
+                        option.value = categoria.id_categoria_prato;
+                        option.textContent = categoria.nome_categoria_prato;
+                        categoriaFilter.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error("Erro ao carregar categorias:", error);
+                }
+            }
+
+            async function carregarPratos() {
+                try {
+                    const response = await fetch("http://localhost:8000/pratos");
+                    const data = await response.json();
+                    mostrarPratos(data.pratos);
+                } catch (error) {
+                    console.error("Erro ao carregar pratos:", error);
+                }
+            }
+
+            async function filtrarPratos() {
+                const searchInput = document.getElementById("searchInput").value.toLowerCase();
+                const categoryFilter = document.getElementById("categoryFilter").value;
+
+                let url = "http://localhost:8000/pratos";
+                const params = [];
+
+                if (searchInput) {
+                    params.push(`search=${searchInput}`);
+                }
+                if (categoryFilter) {
+                    params.push(`category=${categoryFilter}`);
+                }
+
+                if (params.length > 0) {
+                    url += "?" + params.join("&");
+                }
+
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    mostrarPratos(data.pratos);
+                } catch (error) {
+                    console.error("Erro ao filtrar pratos:", error);
+                }
+            }
+
+            function mostrarPratos(pratos) {
+                const pratosContainer = document.getElementById("pratos-container");
+                pratosContainer.innerHTML = "";
+
+                if (pratos.length === 0) {
+                    pratosContainer.innerHTML = "<p>Nenhum prato encontrado.</p>";
+                    return;
+                }
+
+                pratos.forEach((prato) => {
+                    const pratoElement = document.createElement("div");
+                    pratoElement.classList.add("prato");
+
+                    const pratoImage = document.createElement("img");
+                    pratoImage.src = `http://localhost:8000${prato.imagem_prato.replace("images", "/images")}`;
+                    pratoImage.alt = prato.nome_prato;
+
+                    const pratoInfo = document.createElement("div");
+                    pratoInfo.classList.add("prato-info");
+                    pratoInfo.innerHTML = `
+                        <h3>${prato.nome_prato}</h3>
+                        <p>${prato.descricao_prato}</p>
+                        <p class="preco">R$ ${prato.valor_prato.toFixed(2)}</p>
+                    `;
+
+                    const addToCartButton = document.createElement("button");
+                    addToCartButton.classList.add("add-to-cart-btn");
+                    addToCartButton.textContent = "Adicionar ao Carrinho";
+                    addToCartButton.onclick = () => adicionarAoCarrinho(prato);
+
+                    pratoElement.appendChild(pratoImage);
+                    pratoElement.appendChild(pratoInfo);
+                    pratoElement.appendChild(addToCartButton);
+                    pratosContainer.appendChild(pratoElement);
+                });
+            }
+
+            let carrinho = [];
+
+            function adicionarAoCarrinho(prato) {
+                carrinho.push(prato);
+                atualizarCarrinho();
+            }
+
+            function atualizarCarrinho() {
+                const cartContent = document.getElementById("cartContent");
+                const cartTotal = document.getElementById("cartTotal");
+
+                cartContent.innerHTML = "";
+
+                if (carrinho.length === 0) {
+                    cartContent.innerHTML = "<p>Seu carrinho está vazio.</p>";
+                    cartTotal.textContent = "Total: R$ 0,00";
+                    return;
+                }
+
+                let total = 0;
+
+                carrinho.forEach((item, index) => {
+                    total += item.valor_prato;
+
+                    const cartItem = document.createElement("div");
+                    cartItem.classList.add("cart-item");
+                    cartItem.innerHTML = `
+                        <p>${item.nome_prato} - R$ ${item.valor_prato.toFixed(2)}</p>
+                        <button onclick="removerDoCarrinho(${index})">Remover</button>
+                    `;
+                    cartContent.appendChild(cartItem);
+
+                });
+
+                cartTotal.textContent = `Total: R$ ${total.toFixed(2)}`;
+            }
+
+            function removerDoCarrinho(index) {
+    // Verifica se o índice é válido
+    if (index >= 0 && index < carrinho.length) {
+        // Remove o item do carrinho usando splice
+        carrinho.splice(index, 1);
+        // Atualiza o carrinho na tela
+        atualizarCarrinho();
+    }
+}
+
+
+            function pagarCarrinho() {
+    // Verifique o tipo de usuário antes de prosseguir com o pagamento
+    const tipoUsuario = localStorage.getItem("tipo_usuario"); // Obter o tipo de usuário do localStorage
+    
+    if (tipoUsuario === "3") {
+        // Exibir o modal de alerta
+        const modal = document.getElementById("visitorAlertModal");
+        modal.style.display = "block"; // Torna o modal visível
+        return; // Impede que o pagamento seja processado
+    }
+
+    if (carrinho.length === 0) {
+        alert("Seu carrinho está vazio. Adicione itens antes de pagar.");
+        return;
+    }
+
+    // Exibir animação de pagamento
+    const paymentAnimation = document.getElementById("paymentAnimation");
+    if (paymentAnimation) {
+        paymentAnimation.classList.remove("hidden");
+    }
+
+    // Simular o processamento de pagamento
+    setTimeout(() => {
+        // Exibir a caixa de sucesso
+        const successMessage = document.getElementById("successMessage");
+        if (successMessage) {
+            successMessage.classList.remove("hidden");
+        }
+
+        // Enviar os pratos do carrinho para o backend como pedidos pendentes
+        carrinho.forEach(prato => {
+            const pedido = {
+                usuario_id: idUser, // Agora a variável idUser está acessível aqui
+                prato_id: prato.id_prato,
+                status_pedido: '0', // Status 'pendente'
+                data_pedido: new Date().toISOString(), // Defina a data de criação do pedido
+            };
+
+            // Enviar o pedido para o backend
+            fetch('http://localhost:8000/pedidos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(pedido),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erro ao adicionar o pedido.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Pedido criado com sucesso:", data);
+            })
+            .catch(error => {
+                console.error("Erro ao processar pedido:", error);
+            });
+        });
+
+        // Limpar o carrinho após o pagamento
+        carrinho = [];
+        atualizarCarrinho();
+
+        // Ocultar a animação de pagamento
+        if (paymentAnimation) {
+            paymentAnimation.classList.add("hidden");
+        }
+    }, 3000); // Tempo de duração da animação
+}
+
+// Certifique-se de que o evento de clique está sendo atribuído corretamente
+document.getElementById("payButton").addEventListener("click", pagarCarrinho);
+
+// Adicionar a funcionalidade de fechar o modal
+document.getElementById("closeModalButton").addEventListener("click", function() {
+    const modal = document.getElementById("visitorAlertModal");
+    modal.style.display = "none"; // Fecha o modal
+});
+
+
+            document.getElementById("searchInput").addEventListener("keyup", filtrarPratos);
+            document.getElementById("categoryFilter").addEventListener("change", filtrarPratos);
+
+            document.querySelector(".exit").addEventListener("click", async () => {
+                const token = localStorage.getItem("access_token");
+
+                // Verificar se o token está presente
+                if (!token) {
+                    alert("Você já está deslogado.");
+                    window.location.href = "/massas-mias/";
+                    return;
+                }
+
+                try {
+                    const response = await fetch("http://localhost:8000/usuarios/logout", {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                        },
+                    });
+
+                    // Se o logout for bem-sucedido
+                    if (response.ok) {
+                        localStorage.removeItem("access_token");
+                        window.location.href = "/massas-mias/";
+                    } else {
+                        console.error("Falha ao deslogar");
+                        alert("Erro ao deslogar. Tente novamente.");
+                    }
+                } catch (error) {
+                    console.error("Erro:", error);
+                    alert("Erro ao processar o logout. Verifique sua conexão.");
+                }
+            });
+        });
+    </script>
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Pedidos</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="/static/adm/css/style.css">
+    <link rel="stylesheet" href="/static/adm/css/listaPedidos.css">
+    <link rel="stylesheet" href="css/styleresponsive.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-content">
+            <nav class="menu">
+                <h2 id="currentDateTime"></h2>
+                <a href="/massas-mias/admin" >Página Principal</a>
+                <a href="/massas-mias/admin/categorias-pratos">Categorias</a>
+                <a href="/massas-mias/admin/mesas">Mesas</a>
+                <a href="/massas-mias/admin/pedidos"class="active">Pedidos</a>
+                <a href="/massas-mias/admin/pratos">Pratos</a>
+                <a href="/massas-mias/admin/reservas">Reservas</a>
+                <a href="/massas-mias/admin/usuarios">Usuários</a>
+            </nav>
+            <div class="admin-info">
+                <p id="adminName">Nome Administrador</p>
+            </div>
+            <div class="exit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-box-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0z" />
+                    <path fill-rule="evenodd"
+                        d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708z" />
+                </svg>
+            </div>
+        </div>
+    </aside>
+
+    <main class="content">
+        <h1>Pedidos</h1>
+        <hr>
+        
+        <section class="order-info">
+            <div class="order-summary">
+                <h3>Pedidos Pendentes</h3>
+                <p class="order-count" id="pendingOrdersCount">0</p>
+            </div>
+        </section>
+        
+        <!-- <div class="order-card">
+                <div class="order-info">
+                    <h3>Antipasto Toscano</h3>
+                    <p id="pedidosContainer">Salame aromatizado com sal, pimenta em grãos, vinho, alho e açúcar.</p>
+                    <select>
+                        <option value="pendente">Pendente</option>
+                        <option value="concluido">Concluído</option>
+                    </select>
+                </div>
+                <img src="https://via.placeholder.com/100" alt="Antipasto Toscano">
+        </div> -->
+
+        <button class="btn-adicionar" onclick="window.location = '/massas-mias/admin/pedidos/adicionar'">Adicionar Pedido</button>
+
+
+        <div class="order-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>Prato</th>
+                        <th>Status do Pedido</th>
+                        <th>Preço</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <script src="js/script.js"></script>
+    <script>
+
+        function updateDateTime() {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');  
+            const year = now.getFullYear();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const dateTimeString = `${day}/${month}/${year} ${hours}:${minutes}`;
+            document.getElementById('currentDateTime').textContent = dateTimeString;
+        }
+
+        async function fetchLoggedUser() {
+            const token = localStorage.getItem("access_token");
+    
+            if (!token) {
+                console.error("Token não encontrado. Redirecionando para a página de login.");
+                window.location.href = "/massas-mias/";
+                return;
+            }
+    
+            try {
+                const response = await fetch("http://localhost:8000/usuarios/me/", {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+    
+                if (response.ok) {
+                    const userData = await response.json();
+                    const adminNameElement = document.getElementById("adminName");
+    
+                    if (adminNameElement) {
+                        adminNameElement.textContent = `${userData.nome}`;
+                    }
+                } else {
+                    console.error("Erro ao obter os dados do usuário. Redirecionando para a página de login.");
+                    localStorage.removeItem("access_token");
+                    window.location.href = "/massas-mias/";
+                }
+            } catch (error) {
+                console.error("Erro ao buscar os dados do usuário:", error);
+                localStorage.removeItem("access_token");
+                window.location.href = "/massas-mias/";
+            }
+        }
+    
+        document.addEventListener("DOMContentLoaded", fetchLoggedUser);
+
+        document.querySelector(".exit").addEventListener("click", async () => {
+                const token = localStorage.getItem("access_token");
+
+                // Verificar se o token está presente
+                if (!token) {
+                    alert("Você já está deslogado.");
+                    window.location.href = "/massas-mias/";
+                    return;
+                }
+
+                try {
+                    const response = await fetch("http://localhost:8000/usuarios/logout", {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                        },
+                    });
+
+                    // Se o logout for bem-sucedido
+                    if (response.ok) {
+                        localStorage.removeItem("access_token");
+                        window.location.href = "/massas-mias/";
+                    } else {
+                        console.error("Falha ao deslogar");
+                        alert("Erro ao deslogar. Tente novamente.");
+                    }
+                } catch (error) {
+                    console.error("Erro:", error);
+                    alert("Erro ao processar o logout. Verifique sua conexão.");
+                }
+            });
+
+        const statusMap = {
+            '0': 'Pendente',
+            '1': 'Em Andamento',
+            '2': 'Concluído',
+            '3': 'Cancelado'
+        };
+
+        
+        async function fetchOrders() {
+            try {
+                const response = await fetch('http://localhost:8000/pedidos');  
+                const data = await response.json();
+
+                const orders = data.pedidos;
+                const ordersTableBody = document.getElementById('ordersTableBody');
+                const pendingOrdersCount = document.getElementById('pendingOrdersCount');
+                const latestOrderCard = document.getElementById('latestOrderCard');
+                const latestOrderName = document.getElementById('latestOrderName');
+                const latestOrderDescription = document.getElementById('latestOrderDescription');
+                const latestOrderStatus = document.getElementById('latestOrderStatus');
+                const latestOrderImage = document.getElementById('latestOrderImage');
+
+                ordersTableBody.innerHTML = '';
+
+                orders.forEach(order => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${order.usuario_id.nome_usuario}</td>
+                        <td>${order.prato_id.nome_prato}</td>
+                        <td>${statusMap[order.status_pedido] || 'Desconhecido'}</td>
+                        <td>${order.prato_id.valor_prato.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+
+                        <td>
+                            <button class="edit-btn" onclick="window.location.href = '/massas-mias/admin/pedidos/atualizar?id=${order.id_pedido}'">
+                            <span class="material-symbols-outlined">edit</span>
+                            <button class="delete-btn" onclick="excluirPedido(${order.id_pedido})"><span class="material-symbols-outlined">delete</span></button>
+                        </td>
+                    `;
+                    ordersTableBody.appendChild(row);
+                });
+                
+                async function excluirPedido(id_pedido) {
+                    const confirmDelete = confirm("Você tem certeza que deseja excluir este pedido?");
+                    if (confirmDelete) {
+                        try {
+                            const response = await fetch(`http://localhost:8000/pedidos/${id}`, { method: 'DELETE' });
+                            if (!response.ok) throw new Error('Erro ao deletar pedido');
+                            fetchMesas();
+                        } catch (error) {
+                            console.error('Error deleting mesa:', error);
+                        }
+                    }
+                }
+
+                const pendingOrders = orders.filter(order => order.status_pedido === '0' || order.status_pedido === '1');
+                pendingOrdersCount.textContent = pendingOrders.length;
+
+                if (orders.length > 0) {
+                    const latestOrder = orders[orders.length - 1];
+                    latestOrderName.textContent = latestOrder.prato_id.nome_prato;
+                    latestOrderDescription.textContent = latestOrder.prato_id.descricao_prato;
+                    latestOrderStatus.textContent = statusMap[latestOrder.status_pedido];
+                    latestOrderImage.src = latestOrder.prato_id.imagem_prato;
+                    latestOrderCard.style.display = 'block';  
+                } else {
+                    latestOrderCard.style.display = 'none';  
+                }
+
+            } catch (error) {
+                console.error('Erro ao buscar os pedidos:', error);
+            }
+        }
+        async function excluirPedido(id_pedido) {
+    const confirmDelete = confirm("Você tem certeza que deseja excluir este pedido?");
+    if (confirmDelete) {
+        try {
+            const response = await fetch(`http://localhost:8000/pedidos/${id_pedido}`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) {
+                throw new Error('Erro ao deletar pedido');
+            }
+            // alert('Pedido excluído com sucesso!');
+            fetchOrders(); // Atualiza a lista de pedidos
+        } catch (error) {
+            console.error('Erro ao deletar pedido:', error);
+            alert('Não foi possível excluir o pedido.');
+        }
+    }
+}
+
+
+        window.onload = fetchOrders;
+
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+    </script>
+</body>
+</html>

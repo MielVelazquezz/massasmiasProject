@@ -1,0 +1,200 @@
+ /* Estilos CSS permanecem inalterados */
+ * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+
+}
+
+main{
+    overflow-x: hidden;
+
+}
+
+#currentDateTime {
+font-size: 0.9rem;  
+color: #d1d1d1;  
+font-weight: normal; 
+position: relative;
+bottom: 5%;
+
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.main-header {
+    margin-bottom: 30px;
+}
+
+.main-header h1 {
+    font-size: 24px;
+    color: #333;
+}
+.order-info {
+    font-size: 2.5rem;
+    font-weight: bold;
+    position: relative;
+    left: 39.8%;
+}
+
+.order-card {
+    position: relative;
+    left: 20%;
+    bottom: 16%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #000000; /* Fundo do card */
+    border: 2px solid #727C49; /* Borda na cor especificada */
+    padding: 10px; /* Ajustando o padding para mais espaçamento */
+    max-width: 500px; /* Ajustando a largura do card */
+    height: 220px; /* Aumentando a altura do card */
+}
+
+.order-card p{
+    margin: 0 40px 0 -40px;
+}
+
+.order-card h3{
+    margin: 0 40px 0 -40px;
+
+}
+
+.order-card select{
+    margin: 20px 40px -20px -40px;
+
+}
+
+.order-card img {
+    width: 100px;
+    height: 100px;
+    margin: 0 10px 0 -10px;
+
+}
+
+.order-status {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #87b33a;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+    position: relative;
+}
+
+.order-status::after {
+    content: "▼"; /* Adiciona a setinha para baixo */
+    margin-left: 5px; /* Espaçamento entre o texto e a setinha */
+    font-size: 12px; /* Tamanho da setinha */
+    color: white; /* Cor da setinha */
+}
+
+.order-summary {
+    background-color: #73392C;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    width: 100%;
+    width: 30% !important;
+    max-width: 280px;
+    margin: 0 0 18px 0;
+}
+
+.order-count {
+    margin: 10px 0 0 0;
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff !important;
+}
+
+.order-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.order-table th, .order-table td {
+    padding: 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.order-table th {
+    background-color: #73392C;
+    color: #f0f0f0;
+    font-weight: bold;
+}
+
+.edit-btn, .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.add-order {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.add-order-btn {
+    background-color: #723d28;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.add-order-btn:hover {
+    background-color: #5e321f;
+}
+
+/* Estilos Responsivos */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .order-info {
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .order-card, .order-summary {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .order-card img {
+        position: static;
+        margin-top: 10px;
+        max-width: 80px;
+    }
+
+    .order-summary {
+        padding: 15px;
+        font-size: 14px;
+    }
+
+    .order-count {
+        font-size: 36px;
+    }
+}

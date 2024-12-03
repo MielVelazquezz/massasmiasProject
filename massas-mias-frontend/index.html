@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="manifest" href="/static/manifest.json">
+    <title>Massas Mias</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="login-form">
+            <img src="/static/images/massasmias.png" alt="Massas Mias Logo" class="logo">
+            <form id="loginForm">
+                <div class="input-group">
+                    <input type="text" id="login" name="login" placeholder="E-mail ou Telefone" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="senha" name="senha" placeholder="Senha" required>
+                </div>
+                <button type="submit" class="login-button">Login</button>
+            </form>
+            <div class="register">
+                <p>Não possui uma conta conosco?</p>
+                <button class="register-button"
+                    onclick="window.location = '/massas-mias/cadastro'">Cadastrar-me</button>
+            </div>
+        </div>
+        <div class="login-alternative">
+            <h1 class="titulo43">Seja bem-vindo(a)</h1>
+            <button id="guestLoginButton" class="login-alternative-button">Entrar sem Login</button>
+        </div>
+    </div>
+
+    <div id="userData" class="user-data">
+        <h2><span id="nomeUsuario" hidden></span></h2>
+    </div>
+
+    <script>
+
+        // Verifica se o navegador suporta Service Workers
+        if ('serviceWorker' in navigator) {
+            // Registra o Service Worker usando o arquivo localizado em /static/service-worker.js
+            navigator.serviceWorker.register('/static/service-worker.js')
+                .then(() => console.log('Service Worker registrado com sucesso!')) // Mensagem de sucesso.
+                .catch((error) => console.error('Erro ao registrar o Service Worker:', error)); // Mensagem de erro.
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+            // Limpa o localStorage quando a página for carregada (se necessário)
+            if (window.location.href === "/massas-mias") {
+                localStorage.clear();  // Limpa todo o localStorage
+            }
+
+            let token = ''; // Inicializa a variável do token
+
+            // Função de login
+            function login() {
+                const login = document.getElementById("login").value;
+                const senha = document.getElementById("senha").value;
+
+                fetch("http://localhost:8000/usuarios/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: new URLSearchParams({
+                        username: login,
+                        password: senha,
+                    }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                console.error("Erro ao fazer login:", err);
+                                throw new Error("Erro ao fazer login");
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        token = data.access_token; // Armazena o token corretamente
+                        usuario_id = data.id_usuario;
+                        localStorage.setItem("usuario_id", usuario_id)
+                        localStorage.setItem("access_token", token); // Armazena o token no localStorage
+                        fetchUserData(); // Chama a função para buscar dados do usuário
+                    })
+                    .catch(error => {
+                        console.error("Erro no login:", error);
+                    });
+            }
+
+            // Função para buscar dados do usuário
+            function fetchUserData() {
+                if (!token) {  // Verifica se o token foi definido
+                    console.error("Token não definido.");
+                    return;
+                }
+
+                fetch("http://localhost:8000/usuarios/me/", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            console.error(`Erro: ${response.status} - ${response.statusText}`);
+                            throw new Error("Erro ao buscar dados do usuário");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Redireciona conforme o tipo de usuário
+                        if (data.tipo_usuario === "0") {
+                            window.location.href = "/massas-mias/home"; // Redirecionar para /home
+                        } else if (data.tipo_usuario === "1" || data.tipo_usuario === "2") {
+                            window.location.href = "/massas-mias/admin"; // Redirecionar para /admin
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Falha ao buscar dados do usuário:", error);
+                    });
+            }
+
+            // Função para login como visitante
+            function loginComoVisitante() {
+                // Envia os dados do visitante diretamente para o backend
+                const visitanteDados = {
+                    email_usuario: "none@gmail.com",  // E-mail do visitante
+                    telefone_usuario: "000000000",   // Telefone do visitante
+                };
+
+                // Aqui, você pode chamar um endpoint de login para esse visitante
+                fetch("http://localhost:8000/usuarios/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(visitanteDados),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Armazena o token e os dados do visitante, como se fosse um login normal
+                        localStorage.setItem("usuario_id", data.id_usuario);
+                        localStorage.setItem("access_token", data.access_token);
+                        localStorage.setItem("tipo_usuario", "3");  // Define tipo como visitante
+                        window.location.href = "/massas-mias/home";  // Redireciona para a home
+                    })
+                    .catch(error => {
+                        console.error("Erro ao logar como visitante:", error);
+                        alert("Falha ao logar como visitante.");
+                    });
+            }
+
+            // Adiciona o evento de envio do formulário
+            document.getElementById("loginForm").addEventListener("submit", function (event) {
+                event.preventDefault(); // Evita o envio do formulário
+                login(); // Chama a função de login
+            });
+
+            // Adiciona o evento ao botão "Entrar sem Login"
+            document.getElementById("guestLoginButton").addEventListener("click", function () {
+                loginComoVisitante(); // Chama a função de login como visitante
+            });
+        });
+    </script>
+</body>
+
+</html>

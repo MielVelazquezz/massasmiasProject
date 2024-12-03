@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuário - Massas Mias</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/adm/css/style.css">
+    <link rel="stylesheet" href="../css/styleresponsive.css">
+    <style>
+        body {
+            background-color: #663E2C;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="card-cad">
+            <img src="/static/images/massasmias.png" alt="Massas Mias Logo" class="logo">
+            <div class="card-header">
+                Atualização de Usuário
+            </div>
+            <form id="updateForm">
+                <div class="row mb-3">
+                    <input type="hidden" id="idUsuario">
+                    <div class="col-md-6">
+                        <label for="nome-completo" class="form-label">Nome completo:</label>
+                        <input type="text" class="form-control" id="nome-completo" placeholder="Digite o nome completo" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="telefone" class="form-label">Telefone (com DDD):</label>
+                        <input type="tel" class="form-control" id="telefone" placeholder="(XX) XXXXX-XXXX" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" placeholder="Digite o email" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="data-nascimento" class="form-label">Data de nascimento:</label>
+                        <input type="date" class="form-control" id="data-nascimento">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="senha" class="form-label">Senha:</label>
+                        <input type="password" class="form-control" id="senha" placeholder="Digite a senha">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="endereco" class="form-label">Endereço:</label>
+                        <input type="text" class="form-control" id="endereco" placeholder="Digite o endereço" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="tipo-usuario" class="form-label">Tipo de Usuário:</label>
+                        <select class="form-select" id="tipo-usuario" required>
+                            <option selected disabled>Escolha o tipo de usuário</option>
+                            <option value="0">Cliente</option>
+                            <option value="1">Administrador</option>
+                            <option value="2">Desenvolvedor</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-custom">Atualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('updateForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const idUsuario = document.getElementById('idUsuario').value;
+    const nomeUsuario = document.getElementById('nome-completo').value;
+    const emailUsuario = document.getElementById('email').value;
+    const telefoneUsuario = document.getElementById('telefone').value;
+    const enderecoUsuario = document.getElementById('endereco').value;
+    const senhaUsuario = document.getElementById('senha').value;
+    const tipoUsuario = document.getElementById('tipo-usuario').value;
+
+    const dadosAtualizados = {
+        nome_usuario: nomeUsuario,
+        email_usuario: emailUsuario,
+        telefone_usuario: telefoneUsuario,
+        endereco_usuario: enderecoUsuario,
+        tipo_usuario: tipoUsuario,
+        senha_usuario: senhaUsuario.length > 0 ? senhaUsuario : undefined // Envia apenas se não for vazio
+    };
+
+    try {
+        const response = await fetch(`http://localhost:8000/usuarios/${idUsuario}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dadosAtualizados)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Erro na atualização: ${response.status} - ${JSON.stringify(errorData)}`);
+        }
+
+        window.location = 'http://localhost:8000/massas-mias/admin/usuarios';
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Ocorreu um erro ao atualizar o usuário: ' + error.message);
+    }
+});
+
+
+        async function fetchUsuarioById() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const idUsuario = urlParams.get('id');
+
+            if (idUsuario) {
+                try {
+                    const response = await fetch(`http://localhost:8000/usuarios/${idUsuario}`);
+                    if (!response.ok) {
+                        throw new Error(`Erro: ${response.status} ${response.statusText}`);
+                    }
+                    const usuario = await response.json();
+
+                    document.getElementById('idUsuario').value = usuario.id_usuario; // Corrigir o acesso ao id
+                    document.getElementById('nome-completo').value = usuario.nome_usuario;
+                    document.getElementById('email').value = usuario.email_usuario;
+                    document.getElementById('telefone').value = usuario.telefone_usuario;
+                    document.getElementById('endereco').value = usuario.endereco_usuario;
+                    document.getElementById('tipo-usuario').value = usuario.tipo_usuario;
+
+                } catch (error) {
+                    console.error('Erro ao buscar usuário:', error);
+                }
+            } else {
+                console.error('ID do usuário não fornecido na URL.');
+            }
+        }
+
+        window.onload = fetchUsuarioById;
+    </script>
+</body>
+
+</html>

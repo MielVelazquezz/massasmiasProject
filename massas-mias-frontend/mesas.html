@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas - Massa Mia</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <header class="header_mesas">
+        <nav>
+            <div class="header-content">
+                <svg class="returnMesas" onclick="history.back()" xmlns="http://www.w3.org/2000/svg" width="16"
+                    height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5" />
+                </svg>
+                <a onclick="history.back()">
+                    <img src="/static/images/massasmias.png" alt="Massas Mias Logo" class="logo">
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Formulário para reserva -->
+    <div class="cxReservar">
+        <div class="form-reserva">
+            <input type="date" id="data" placeholder="Data">
+            <input type="time" id="hora" placeholder="Hora">
+            <select id="mesa" required>
+                <option value="" disabled selected>Mesa</option>
+                <!-- Mesas serão carregadas aqui via JS -->
+            </select>
+            <button type="submit" onclick="reservarMesa()">CONFIRMAR</button>
+        </div>
+    </div>
+
+    <!-- Modal de Aviso para Visitantes -->
+    <div id="visitorAlertModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeModalButton">&times;</span>
+            <h2>Visitantes não podem fazer reservas.</h2>
+            <p>Por favor, faça login para continuar.</p>
+        </div>
+    </div>
+
+
+    <!-- Exibição da planta das mesas -->
+    <div class="container-mesas" id="mesas-container">
+        <div class="title">Planta de Mesas - Restaurante</div>
+        <!-- As mesas serão adicionadas aqui -->
+    </div>
+
+    <script>
+        // Função para carregar as mesas da API e atualizar o select e a planta
+        async function carregarMesas() {
+            try {
+                const response = await fetch('http://localhost:8000/mesas'); // Endpoint da sua API para listar as mesas
+                const data = await response.json();
+                const mesasSelect = document.getElementById('mesa');
+                const mesasContainer = document.getElementById('mesas-container');
+
+                // Limpa o select e a planta para adicionar as novas mesas
+                mesasSelect.innerHTML = '<option value="" disabled selected>Mesa</option>';
+                mesasContainer.innerHTML = '<div class="title">Planta de Mesas - Restaurante</div>';
+
+                // Adiciona as mesas no select
+                data.mesas.forEach(mesa => {
+                    const option = document.createElement('option');
+                    option.value = mesa.id_mesa;
+                    if (mesa.numero_cadeiras == 1) {
+                        option.textContent = `Mesa ${mesa.codigo_mesa} - ${mesa.numero_cadeiras} lugar`;
+                    }
+                    else {
+                        option.textContent = `Mesa ${mesa.codigo_mesa} - ${mesa.numero_cadeiras} lugares`;
+                    }
+                    mesasSelect.appendChild(option);
+
+                    // Adiciona as mesas na planta
+                    const mesaDiv = document.createElement('div');
+                    mesaDiv.className = 'mesa-container';
+
+                    const mesaLabel = document.createElement('div');
+                    mesaLabel.className = 'mesa-label';
+                    mesaLabel.id = mesa.codigo_mesa.toLowerCase();
+                    mesaLabel.innerText = mesa.codigo_mesa;
+
+                    const mesaImg = document.createElement('img');
+                    mesaImg.className = 'mesa mesa-leve-ajuste';
+                    mesaImg.src = `/static/mesas/mesa-${mesa.numero_cadeiras}.png`;
+                    mesaImg.alt = `Mesa para ${mesa.numero_cadeiras} pessoas`;
+
+                    mesaDiv.appendChild(mesaLabel);
+                    mesaDiv.appendChild(mesaImg);
+                    mesasContainer.appendChild(mesaDiv);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar mesas:', error);
+            }
+        }
+
+        async function verificarDisponibilidade(mesa_id, dataHoraFormatada) {
+            try {
+                const response = await fetch(`http://localhost:8000/reservas/${mesa_id}/disponibilidade`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ data_reservada: dataHoraFormatada }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.disponivel; // true ou false
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail);
+                }
+            } catch (error) {
+                console.error('Erro ao verificar disponibilidade:', error);
+                alert('Erro ao verificar disponibilidade da mesa.');
+                return false;
+            }
+        }
+
+
+
+        async function reservarMesa() {
+            // Verifique o tipo de usuário antes de permitir a reserva
+            const tipoUsuario = localStorage.getItem("tipo_usuario"); // Obter o tipo de usuário do localStorage
+
+            if (tipoUsuario === "3") {
+                // Exibir o modal para visitantes
+                exibirModalVisitante();
+                return; // Impede a reserva
+            }
+
+            const data = document.getElementById('data').value; // Ex.: "2024-11-27"
+            const hora = document.getElementById('hora').value; // Ex.: "14:30"
+            const mesaSelecionada = document.getElementById('mesa').value;
+
+            if (!data || !hora || !mesaSelecionada) {
+                alert("Por favor, preencha todos os campos.");
+                return; // Interrompe a função
+            }
+
+            // Montar manualmente a data/hora no formato ISO 8601
+            const dataHoraFormatada = `${data}T${hora}:00`;
+            const usuarioId = localStorage.getItem('usuario_id'); // Pega o usuário logado
+
+            if (!usuarioId) {
+                alert("Você precisa estar logado para fazer uma reserva.");
+                return; // Interrompe a função
+            }
+
+            // Verifica a disponibilidade da mesa antes de tentar reservar
+            const disponibilidade = await verificarDisponibilidade(mesaSelecionada, dataHoraFormatada);
+            if (!disponibilidade) {
+                alert("Esta mesa não está disponível no horário selecionado.");
+                return; // Interrompe a função
+            }
+
+            // Se disponível, continua com a criação da reserva
+            try {
+                const reserva = {
+                    usuario_id: usuarioId,
+                    mesa_id: mesaSelecionada,
+                    data_reservada: dataHoraFormatada,
+                };
+
+                const response = await fetch('http://localhost:8000/reservas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(reserva),
+                });
+
+                if (response.ok) {
+                    alert("Reserva realizada com sucesso!");
+                } else {
+                    const errorData = await response.json();
+                    alert(`Erro ao realizar reserva: ${errorData.detail}`);
+                }
+            } catch (error) {
+                console.error('Erro ao fazer reserva:', error);
+                alert('Ocorreu um erro ao tentar reservar a mesa.');
+            }
+        }
+
+        // Função para exibir o modal de aviso para visitantes
+        function exibirModalVisitante() {
+            const modal = document.getElementById('visitorAlertModal');
+            modal.style.display = "block";  // Exibe o modal
+        }
+
+        // Função para fechar o modal
+        function fecharModal() {
+            const modal = document.getElementById('visitorAlertModal');
+            modal.style.display = "none";  // Esconde o modal
+        }
+
+
+        document.getElementById("closeModalButton").addEventListener("click", function () {
+            const modal = document.getElementById("visitorAlertModal");
+            modal.style.display = "none"; // Fecha o modal
+        });
+
+
+
+        // Carrega as mesas ao carregar a página
+        document.addEventListener('DOMContentLoaded', carregarMesas);
+    </script>
+</body>
+
+</html>

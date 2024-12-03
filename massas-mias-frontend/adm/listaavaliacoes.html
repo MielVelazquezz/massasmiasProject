@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliações</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="/static/adm/css/style.css">
+</head>
+<style>
+    #currentDateTime {
+        font-size: 0.9rem;  
+        color: #d1d1d1;  
+        font-weight: normal; 
+        position: relative;
+        bottom: 5%;
+    }
+</style>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-content">
+            <nav class="menu">
+                <h2 id="currentDateTime"></h2>
+                <a href="/massas-mias/admin" >Página Principal</a>
+                <a href="/massas-mias/admin/avaliacoes"class="active">Avaliações</a>
+                <a href="/massas-mias/admin/categorias-pratos">Categorias</a>
+                <a href="/massas-mias/admin/mesas">Mesas</a>
+                <a href="/massas-mias/admin/pedidos">Pedidos</a>
+                <a href="/massas-mias/admin/pratos">Pratos</a>
+                <a href="/massas-mias/admin/reservas">Reservas</a>
+                <a href="/massas-mias/admin/usuarios">Usuários</a>
+            </nav>
+            <div class="admin-info">
+                <p>Nome Administrador</p>
+            </div>
+        </div>
+    </aside>
+
+    <main class="content">
+        <h1>Avaliações</h1>
+        <hr>
+
+        <div class="avaliacoes-info">
+            <div class="box-avaliacao">
+                <h2>Avaliação Média</h2>
+                <p class="avaliacao-media" id="avaliacao-media">4.9</p>
+            </div>
+            <div class="box-avaliacao">
+                <h2>Número de Avaliações</h2>
+                <p class="numero-avaliacoes" id="numero-avaliacoes">15</p>
+            </div>
+        </div>
+
+        <table class="avaliacoes-table">
+            <thead>
+                <tr>
+                    <th>Nota de Avaliação</th>
+                    <th>Texto de Avaliação</th>
+                    <th>Usuário</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="avaliacoes-body">
+                <!-- As avaliações serão inseridas dinamicamente aqui -->
+            </tbody>
+        </table>
+    </main>
+</body>
+
+<script>
+    function updateDateTime() {
+        const now = new Date();
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const dateTimeString = `${day}/${month}/${year} ${hours}:${minutes}`;
+        document.getElementById('currentDateTime').textContent = dateTimeString;
+    }
+
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+
+    // Função para buscar os dados da API
+    async function fetchAvaliacoes() {
+        try {
+            const response = await fetch('http://localhost:8000/avaliacoes'); // Substitua pela URL correta da API
+            const data = await response.json();
+            displayAvaliacoes(data.avaliacoes);
+        } catch (error) {
+            console.error('Erro ao buscar dados:', error);
+        }
+    }
+
+    // Função para exibir as avaliações na tabela
+    function displayAvaliacoes(avaliacoes) {
+        const avaliacoesBody = document.getElementById('avaliacoes-body');
+        avaliacoesBody.innerHTML = ''; // Limpa o conteúdo da tabela
+
+        // Preenchendo as linhas da tabela
+        avaliacoes.forEach(avaliacao => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${avaliacao.estrela_avaliacao}</td>
+                <td>${avaliacao.usuario_avaliacao}</td>
+                <td>${avaliacao.usuario_id.nome_usuario}</td>
+                <td>
+                    <button class="delete-btn" onclick="deletarAvaliacao(${avaliacao.id_avaliacao})">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </td>
+            `;
+            avaliacoesBody.appendChild(row);
+        });
+
+        // Atualizar a média de avaliações e o número total
+        const totalAvaliacoes = avaliacoes.length;
+        const mediaAvaliacao = (avaliacoes.reduce((sum, avaliacao) => sum + avaliacao.estrela_avaliacao, 0) / totalAvaliacoes).toFixed(1);
+
+        document.getElementById('numero-avaliacoes').textContent = totalAvaliacoes;
+        document.getElementById('avaliacao-media').textContent = mediaAvaliacao;
+    }
+
+    async function deletarAvaliacao(idAvaliacao) {
+        const confirmacao = confirm("Você tem certeza que deseja deletar esta avaliação?");
+        if (!confirmacao) return;
+
+        try {
+            const response = await fetch(`http://localhost:8000/avaliacoes/${idAvaliacao}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error("Erro ao deletar a avaliação");
+            }
+
+            fetchAvaliacoes(); // Recarregar a lista de avaliações
+        } catch (error) {
+            console.error(error);
+            alert("Ocorreu um erro ao deletar a avaliação.");
+        }
+    }
+
+    // Carregar as avaliações ao carregar a página
+    document.addEventListener('DOMContentLoaded', fetchAvaliacoes);
+</script>
+
+
+</html>

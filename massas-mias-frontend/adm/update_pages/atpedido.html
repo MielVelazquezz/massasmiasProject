@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualização de Pedidos - Massas Mias</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/adm/css/style.css">
+    <style>
+        body {
+            background-color: #663E2C;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="card-cad">
+            <img src="/static/images/massasmias.png" alt="Massas Mias Logo" class="logo">
+            <div class="card-header">
+                Atualização de Pedidos
+            </div>
+            <form>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="usuario" class="form-label">Usuário:</label>
+                        <select class="form-control" id="usuario">
+                            <option selected>Escolha o usuário</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="status" class="form-label">Status do pedido:</label>
+                        <select class="form-control" id="status">
+                            <option selected>Escolha o status</option>
+                            <option value="0">Pendente</option>
+                            <option value="1">Em Preparação</option>
+                            <option value="2">Concluído</option>
+                            <option value="3">Cancelado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="prato" class="form-label">Prato:</label>
+                        <select class="form-control" id="prato">
+                            <option selected>Escolha o prato</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="data" class="form-label">Data do pedido:</label>
+                        <input type="date" class="form-control" id="data">
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-custom">Atualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        async function carregarDadosPedido(pedidoId) {
+            try {
+                const response = await fetch(`http://localhost:8000/pedidos/${pedidoId}`);
+                if (!response.ok) {
+                    throw new Error("Erro ao buscar o pedido");
+                }
+                const pedido = await response.json();
+
+                console.log("Pedido retornado:", pedido);
+
+                // Define os valores corretos para os campos com base no esquema
+                document.getElementById('usuario').value = pedido.usuario_id.id_usuario; // Acessa o ID do usuário
+                document.getElementById('status').value = pedido.status_pedido; // Status simples
+                document.getElementById('prato').value = pedido.prato_id.id_prato; // Acessa o ID do prato
+                document.getElementById('data').value = new Date(pedido.data_pedido).toISOString().split('T')[0]; // Formata a data
+
+                // Marcar o option correto para os selects (fallback para navegadores mais antigos)
+                selecionarOptionPorValor('usuario', pedido.usuario_id.id_usuario);
+                selecionarOptionPorValor('prato', pedido.prato_id.id_prato);
+            } catch (error) {
+                console.error("Erro ao carregar o pedido:", error);
+                alert("Erro ao carregar o pedido: " + error.message);
+            }
+        }
+
+        // Função utilitária para selecionar a option correta
+        function selecionarOptionPorValor(selectId, valor) {
+            const select = document.getElementById(selectId);
+            Array.from(select.options).forEach(option => {
+                if (option.value == valor) {
+                    option.selected = true;
+                }
+            });
+        }
+
+
+        // Função utilitária para selecionar a option correta
+        function selecionarOptionPorValor(selectId, valor) {
+            const select = document.getElementById(selectId);
+            Array.from(select.options).forEach(option => {
+                if (option.value == valor) {
+                    option.selected = true;
+                }
+            });
+        }
+
+        async function popularSelects() {
+            try {
+                const [usuariosResponse, pratosResponse] = await Promise.all([
+                    fetch('http://localhost:8000/usuarios'),
+                    fetch('http://localhost:8000/pratos')
+                ]);
+
+                if (!usuariosResponse.ok || !pratosResponse.ok) {
+                    throw new Error("Erro ao buscar usuários ou pratos");
+                }
+
+                const usuarios = await usuariosResponse.json();
+                const pratos = await pratosResponse.json();
+
+                console.log("Usuários retornados:", usuarios);
+                console.log("Pratos retornados:", pratos);
+
+                const usuarioSelect = document.getElementById('usuario');
+                const pratoSelect = document.getElementById('prato');
+
+                usuarios.usuarios.forEach(usuario => {
+                    const option = document.createElement('option');
+                    option.value = usuario.id_usuario;
+                    option.textContent = usuario.nome_usuario; // Nome do usuário para exibição
+                    usuarioSelect.appendChild(option);
+                });
+
+                pratos.pratos.forEach(prato => {
+                    const option = document.createElement('option');
+                    option.value = prato.id_prato;
+                    option.textContent = prato.nome_prato; // Nome do prato para exibição
+                    pratoSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Erro ao popular selects:", error);
+                alert("Erro ao popular selects: " + error.message);
+            }
+        }
+
+        window.onload = async function () {
+            try {
+                await popularSelects(); // Popula os selects primeiro
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const pedidoId = urlParams.get('id');
+
+                if (pedidoId && pedidoId !== 'undefined') {
+                    await carregarDadosPedido(pedidoId); // Carrega os dados do pedido
+                } else {
+                    console.error("ID do pedido não encontrado ou inválido.");
+                    alert("ID do pedido não encontrado ou inválido. Verifique a URL.");
+                }
+            } catch (error) {
+                console.error("Erro durante a inicialização:", error);
+            }
+
+            document.querySelector('form').addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const pedidoId = new URLSearchParams(window.location.search).get('id');
+                if (pedidoId && pedidoId !== 'undefined') {
+                    atualizarPedido(pedidoId);
+                } else {
+                    alert("Erro: ID do pedido não é válido. Não é possível atualizar.");
+                }
+            });
+        };
+
+
+        async function atualizarPedido(pedidoId) {
+    const data = {
+        usuario_id: parseInt(document.getElementById('usuario').value, 10),
+        prato_id: parseInt(document.getElementById('prato').value, 10),
+        status_pedido: document.getElementById('status').value,
+        data_pedido: document.getElementById('data').value
+    };
+
+    // Validação básica dos campos
+    if (!data.usuario_id || !data.prato_id || !data.status_pedido || !data.data_pedido) {
+        alert("Por favor, preencha todos os campos.");
+        return;
+    }
+
+    console.log("Atualizando pedido com os dados:", data);
+
+    try {
+        const response = await fetch(`http://localhost:8000/pedidos/${pedidoId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            if (response.status === 422) {
+                const errorData = await response.json();
+                console.error("Erro 422 detalhado:", errorData);
+                const errorMessages = errorData.detail.map(error => error.msg).join(", ");
+                alert(`Erro ao atualizar o pedido: ${errorMessages}`);
+            } else {
+                throw new Error("Erro ao atualizar o pedido");
+            }
+            return;
+        }
+
+        // alert("Pedido atualizado com sucesso!");
+        window.location.href = 'http://localhost:8000/massas-mias/admin/pedidos';
+    } catch (error) {
+        console.error("Erro ao atualizar o pedido:", error);
+        alert("Erro ao atualizar o pedido: " + (error.message || JSON.stringify(error)));
+    }
+}
+
+
+    </script>
+</body>
+
+</html>

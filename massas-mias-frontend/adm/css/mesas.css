@@ -1,0 +1,53 @@
+.mesas-info {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.box-mesas {
+    background-color: #73392C;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: #FFF;
+    width: 25%;
+}
+
+.box-mesas h2 {
+    margin-bottom: 10px;
+}
+
+.mesas-count {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.mesas-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.mesas-table th,
+.mesas-table td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #CCC;
+}
+
+.mesas-table th {
+    background-color: #73392C;
+    color: #FFF;
+}
+
+.mesas-table td {
+    background-color: #FFF;
+}
+
+#currentDateTime {
+    font-size: 0.9rem;
+    color: #d1d1d1;
+    font-weight: normal;
+    position: relative;
+    bottom: 5%;
+}

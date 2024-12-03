@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Categoria - Massas Mias</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background-color: #663E2C;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-cad {
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            box-shadow: 0px 0px 10px #0000004d;
+            border: 3px solid #000;
+            border-radius: 0;
+            background-color: #ddd;
+            position: relative;
+        }
+
+        .form-label,
+        .form-control {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .form-control {
+            padding: 8px;
+        }
+
+        .logo {
+            width: 100px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .btn-custom {
+            background-color: #9E551C;
+            color: #FFF;
+            padding: 10px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-custom:hover {
+            background-color: #814621;
+        }
+
+        .card-header {
+            text-align: center;
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background-color: #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="card-cad">
+            <img src="/static/images/massasmias.png" alt="Massas Mias Logo" class="logo">
+            <div class="card-header">
+                Cadastro de Categoria
+            </div>
+            <form id="categoriaForm">
+                <div class="mb-3">
+                    <label for="nomeCategoria" class="form-label">Nome da categoria:</label>
+                    <input type="text" class="form-control" id="nomeCategoria" placeholder="Digite o nome da categoria" required>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-custom">Cadastrar</button>
+                </div>
+            </form>
+            <div id="successMessage" class="alert alert-success mt-3" style="display: none;">Categoria cadastrada com sucesso!</div>
+            <div id="errorMessage" class="alert alert-danger mt-3" style="display: none;">Erro ao cadastrar categoria. Tente novamente.</div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById("categoriaForm").addEventListener("submit", async function (event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            const nomeCategoria = document.getElementById("nomeCategoria").value;
+
+            try {
+                const response = await fetch('http://localhost:8000/categorias_prato', { // URL da API para cadastro
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ nome_categoria_prato: nomeCategoria }) // Envia o nome da categoria
+                });
+
+                if (response.ok) {
+                    // Se o cadastro for bem-sucedido, redirecione para a página "feito.html"
+                    window.location.href = '/massas-mias/admin/feito';
+                } else {
+                    throw new Error('Erro ao cadastrar categoria');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById("errorMessage").style.display = "block"; // Exibe mensagem de erro
+                document.getElementById("successMessage").style.display = "none";
+            }
+        });
+    </script>
+</body>
+
+</html>

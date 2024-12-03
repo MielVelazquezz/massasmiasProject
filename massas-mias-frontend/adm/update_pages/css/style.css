@@ -1,0 +1,522 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    background-color: #F0F0F0;
+}
+
+.sidebar {
+    width: 250px;
+    background-image: url('../images/sidebar.png'); /* Substitua pelo caminho da sua imagem */
+    background-size: cover;
+    padding: 20px;
+    color: #FFF;
+}
+
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.date {
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.menu {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Alinha verticalmente */
+    align-items: center; /* Alinha horizontalmente */
+}
+
+.menu a {
+    padding: 15px; /* Aumenta o padding para aumentar o espaço entre os links */
+    text-decoration: none;
+    color: #FFF;
+    margin-bottom: 20px; /* Aumenta o espaço entre os links */
+    position: relative; /* Necessário para o pseudo-elemento */
+}
+
+.menu a::after {
+    content: '';
+    display: block;
+    height: 2px; 
+    background-color: #FFF; 
+    width: 100%; 
+    position: absolute;
+    left: 0; 
+    transform: scaleX(0); 
+    transition: transform 0.3s ease; 
+}
+
+.menu a:hover::after {
+    transform: scaleX(1); 
+}
+
+.menu a.active::after {
+    transform: scaleX(1); 
+}
+
+.admin-info {
+    text-align: center;
+    padding-top: 20px;
+    
+}
+
+.content {
+    flex-grow: 1;
+    padding: 40px;
+    background-color: #EEEEEE;
+}
+
+h1 {
+    font-size: 2rem;
+    color: #73392C;
+    margin-bottom: 20px;
+}
+
+hr {
+    margin-bottom: 20px;
+}
+
+.reservas-info {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.box-reservas {
+    background-color: #73392C;
+    padding: 20px;
+    width: 25%;
+    border-radius: 10px;
+    text-align: center;
+    color: #FFF;
+}
+
+.box-reservas h2 {
+    margin-bottom: 10px;
+}
+
+.reservas-count {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.reservas-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.reservas-table th, .reservas-table td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #CCC;
+}
+
+.reservas-table th {
+    background-color: #73392C;
+    color: #FFF;
+}
+
+.reservas-table td {
+    background-color: #FFF;
+}
+
+.edit-btn, .delete-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.btn-adicionar {
+    display: block;
+    margin: 0 auto;
+    padding: 15px 30px;
+    background-color: #73392C;
+    color: #FFF;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn-adicionar:hover {
+    background-color: #a24631;
+}
+.pratos-info {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.box-pratos {
+    background-color: #73392C;
+    padding: 20px;
+    border-radius: 10px;
+    width: 25%;
+    text-align: center;
+    color: #FFF;
+}
+
+.box-pratos h2 {
+    margin-bottom: 10px;
+}
+
+.pratos-count {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.pratos-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.pratos-table th, .pratos-table td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #CCC;
+}
+
+.pratos-table th {
+    background-color: #73392C;
+    color: #FFF;
+}
+
+.pratos-table td {
+    background-color: #FFF;
+}
+
+.prato-img {
+    width: 50px;
+    height: 50px;
+}
+
+.edit-btn, .delete-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+.usuarios-info {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.box-usuarios {
+    background-color: #73392C;
+    padding: 20px;
+    border-radius: 10px;
+    width: 25%;
+    text-align: center;
+    color: #FFF;
+}
+
+.box-usuarios h2 {
+    margin-bottom: 10px;
+}
+
+.usuarios-count {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.usuarios-table {
+    width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.usuarios-table th, .usuarios-table td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #CCC;
+}
+
+.usuarios-table th {
+    background-color: #73392C;
+    color: #FFF;
+}
+
+.usuarios-table td {
+    background-color: #FFF;
+}
+
+.edit-btn, .delete-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.password-icon {
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+}
+
+.btn-adicionar {
+    display: block;
+    margin: 0 auto 15px;
+    padding: 15px 30px;
+    background-color: #73392C;
+    color: #FFF;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.btn-adicionar:hover {
+    background-color: #a24631;
+}
+.avaliacoes-info {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.box-avaliacao {
+    background-color: #73392C;
+    padding: 20px;
+    width: 25%;
+    border-radius: 8px;
+    text-align: center;
+    width: 25%; /* Diminuímos a largura */
+    height: 120px; /* Aumentamos a altura para aproximar do formato quadrado */
+}
+
+.box-avaliacao h2 {
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.avaliacao-media,
+.numero-avaliacoes {
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.avaliacoes-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.avaliacoes-table th,
+.avaliacoes-table td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: center;
+}
+
+.avaliacoes-table th {
+    background-color: #73392C;
+    color: #f0f0f0;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #693D3D;
+}
+
+.material-symbols-outlined {
+    font-size: 24px;
+}
+
+/* ---------------------------------------------------Pagina principal-------------------------------------------------------------*/
+
+.stats {
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* Aumentado o espaço entre as linhas de estatísticas */
+}
+
+.stat-row {
+    display: flex;
+    justify-content: center;
+    gap: 65px; /* Aumentado o espaço entre os cards de estatísticas */
+}
+
+
+.stat-box {
+    width: 20%;
+    height: 120px;
+    padding: 20px;
+    background-color: #73392C;
+    color: white;
+    text-align: center;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+}
+
+.stat-box h3 {
+    margin-bottom: 10px;
+    font-size: 1rem;
+    text-decoration: underline;
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stat-box p {
+    font-size: 2.5rem;
+    margin-top: 40px;
+}
+
+.pedidos-title {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+.order-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #000000; /* Fundo do card */
+    border: 2px solid #727C49; /* Borda na cor especificada */
+    padding: 25px; /* Ajustando o padding para mais espaçamento */
+    max-width: 500px; /* Ajustando a largura do card */
+    height: 220px; /* Aumentando a altura do card */
+    margin: 30px auto; /* Aumentando o espaçamento entre os cards */
+}
+
+.order-card img {
+    width: 100px;
+    height: 100px;
+}
+
+.order-info {
+    flex-grow: 1;
+    margin-right: 20px;
+    display: flex; /* Adicionando flex para espaçamento */
+    flex-direction: column; /* Organizando em coluna */
+    gap: 15px; /* Aumentando o espaçamento entre os elementos */
+}
+
+.order-info h3 {
+    margin: 0; /* Removendo margens para melhor espaçamento */
+    font-size: 1.4rem;
+    color: #FFFFFF; /* Cor do título */
+}
+
+.order-info p {
+    color: #C6C6C6; /* Cor da descrição */
+}
+
+.order-info select {
+    padding: 3px; /* Reduzindo o padding */
+    font-size: 0.9rem; /* Diminuindo o tamanho da fonte */
+    width: 150px; /* Definindo uma largura específica */
+    border-radius: 5px;
+    background-color: #95A650; /* Cor do botão select */
+    color: white; /* Cor do texto no select */
+}
+#currentDateTime {
+    font-size: 0.9rem; 
+    color: #d1d1d1; 
+    font-weight: normal; 
+    margin-bottom: 20px; 
+}
+.admin-name {
+    font-size: 1rem;
+    color: #d1d1d1;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.main-content h1 {
+    margin-bottom: 30px;
+    font-size: 2rem;
+    text-align: center;
+    border-bottom: 2px solid black;
+    padding-bottom: 10px;
+}
+
+/* ------------------------------------------------cadastros--------------------------------------------*/
+/* pratos, reservas e usuarios */
+
+.card-cad {
+    max-width: 900px;
+    width: 100%;
+    padding: 40px;
+    box-shadow: 0px 0px 10px #0000004d;
+    border: 3px solid #000;
+    border-radius: 0;
+    background-color: #ddd;
+    position: relative;
+}
+
+.form-label,
+.form-control,
+.form-select {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.form-control,
+.form-select {
+    padding: 8px;
+}
+
+.logo {
+    width: 100px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.btn-custom {
+    background-color: #9E551C;
+    color: #FFF;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.btn-custom:hover {
+    background-color: #814621;
+}
+
+.card-header {
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    background-color: #ddd;
+}
+.form-select{
+    color: #696969;
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="/static/css/cadastro.css">
+
+</head>
+<body>
+    <div class="form-container">
+        <svg class="returnCad" onclick="history.back()" xmlns="http://www.w3.org/2000/svg" width="16"
+                    height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5" />
+                </svg>
+        <div class="logo">
+            <img src="/static/images/massasmias-sem-fundo.png" alt="Massas Mias Italian Restaurant" class="logo">
+        </div>
+        <form id="cadastroForm">
+            <input type="text" name="nome" placeholder="Nome completo:" required>
+            <input type="tel" name="telefone" placeholder="Telefone (com DDD):" required>
+            <input type="email" name="email" placeholder="E-mail:" required>
+            <input type="date" name="data-nascimento" placeholder="Data de Nascimento:" required>
+            <input type="text" name="endereco" placeholder="Endereço (rua, número e bairro):" required>
+            <input type="password" name="senha" placeholder="Senha:" required>
+            
+            <select name="tipo_usuario" hidden>
+                <option value="0">Cliente</option>
+            </select>
+            
+            <button type="submit" class="form-cadastro">Cadastrar-se</button>
+        </form>
+        
+    </div>
+
+    <script>
+        document.getElementById('cadastroForm').addEventListener('submit', async function (event) {
+    event.preventDefault(); // Impede o envio padrão do formulário
+
+    const nome = event.target.nome.value;
+    const telefone = event.target.telefone.value;
+    const email = event.target.email.value;
+    const dataNascimento = event.target['data-nascimento'].value;
+    const endereco = event.target.endereco.value;
+    const senha = event.target.senha.value;
+    const tipoUsuario = event.target.tipo_usuario.value; // Captura o tipo de usuário
+
+    const novoUsuario = {
+        nome_usuario: nome,
+        telefone_usuario: telefone,
+        email_usuario: email,
+        data_nascimento: dataNascimento,
+        endereco_usuario: endereco,
+        senha_usuario: senha,
+        tipo_usuario: tipoUsuario, // Inclui o tipo de usuário
+    };
+
+    try {
+        const response = await fetch('http://localhost:8000/usuarios', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(novoUsuario)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Erro ao cadastrar: ${response.status} - ${JSON.stringify(errorData)}`);
+        }
+
+        window.location = 'http://localhost:8000/massas-mias'; // Redireciona após o cadastro
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Ocorreu um erro ao cadastrar o usuário: ' + error.message);
+    }
+});
+
+        </script>
+        
+</body>
+</html>

@@ -1,0 +1,111 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-image: url("/static/images/fundomassas.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center; 
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} 
+
+.form-container {
+    background-color: #f2f2f2;
+    padding: 40px;
+    box-shadow: 0 0 20px #00000033;
+    width: 800px; 
+    max-width: 100%; 
+    height: auto; 
+    box-sizing: border-box;
+    border-radius: 10px; 
+}
+
+.form-container .logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.form-container .logo img {
+    max-width: 150px;
+    max-height: 150px;
+}
+
+.form-container form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.returnCad{
+    cursor: pointer;
+}
+
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="password"],
+.form-container input[type="date"],
+.form-container input[type="tel"] {
+    width: 48%;
+    padding: 15px;
+    border: 1px solid #000000;
+    background: #f2f2f2;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+.form-container button {
+    width: 100%;
+    padding: 15px;
+    background-color: #A4512A;
+    color: white;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.form-container button:hover {
+    background-color: #8A3F21;
+}
+
+@media (max-width: 768px) {
+    .logo{
+        width: 100px;
+        height: 100px;
+        display: flex;
+        margin-left: 28%;
+    }
+    .form-container {
+        align-items: center;
+        min-height: 5%;
+        min-width: 1%;
+    }
+    .form-cadastro{
+        width: 80%;
+        height: 30%;
+    }
+    #cadastroForm{
+        margin-bottom: 100px;
+    }
+    .form-container input[type="text"],
+    .form-container input[type="email"],
+    .form-container input[type="password"],
+    .form-container input[type="date"],
+    .form-container input[type="tel"],
+    .form-container button[type="submit"],
+    .form-container select[name="tipo_usuario"]
+    {
+        width: 80%;
+        height: 30%;
+        margin-left: 9%;
+        font-size: 12px;
+        margin-bottom: -10px;
+        border-bottom: 1px solid #000000;
+       
+    }
+}

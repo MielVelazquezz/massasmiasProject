@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/adm/css/style.css">
+    <link rel="stylesheet" href="/static/adm/css/pagina-principal.css">
+</head>
+
+<body>
+    <aside class="sidebar2 sidebar">
+        <div class="sidebar-content">
+            <nav class="menu">
+                <h2 id="currentDateTime"></h2>
+                <a href="/massas-mias/admin" class="active">Página Principal</a>
+                <!-- <a href="/massas-mias/admin/avaliacoes">Avaliações</a> -->
+                <a href="/massas-mias/admin/categorias-pratos">Categorias</a>
+                <a href="/massas-mias/admin/mesas">Mesas</a>
+                <a href="/massas-mias/admin/pedidos">Pedidos</a>
+                <a href="/massas-mias/admin/pratos">Pratos</a>
+                <a href="/massas-mias/admin/reservas">Reservas</a>
+                <a href="/massas-mias/admin/usuarios">Usuários</a>
+            </nav>
+            <div class="admin-info">
+                <p id="adminName">Nome Administrador</p>
+            </div>
+            <div class="exit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-box-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0z" />
+                    <path fill-rule="evenodd"
+                        d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708z" />
+                </svg>
+            </div>
+        </div>
+    </aside>
+    <div class="container2 container">
+        <div class="main-content">
+            <h1>Página Principal</h1>
+            <div class="stats">
+                <div class="stat-row">
+                    <div class="stat-box" style="@media (max-width: 768px) {}">
+                        <h3>Lucro Total</h3>
+                        <p id="lucro_total"></p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Número de Pedidos</h3>
+                        <p id="num_pedidos"></p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Número de Pratos</h3>
+                        <p id="num_pratos"></p>
+                    </div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-box">
+                        <h3>Número de Reservas</h3>
+                        <p id="num_reservas"></p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Número de Usuários</h3>
+                        <p id="num_usuarios"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="ped">
+                <h2 class="pedidos-title">Pedidos Pendentes</h2>
+            <div id="pedidosContainer"></div>
+            <button class="prev-btn" disabled>Anterior</button>
+            <button class="next-btn">Próximo</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        let data = {}; // Variável global para armazenar os pedidos
+
+        function updateDateTime() {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const dateTimeString = `${day}/${month}/${year} ${hours}:${minutes}`;
+            document.getElementById('currentDateTime').textContent = dateTimeString;
+        }
+
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        let currentIndex = 0;
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+
+        function renderPedidos(pedidos) {
+            const pedidosContainer = document.getElementById('pedidosContainer');
+            pedidosContainer.innerHTML = ''; // Limpa o conteúdo atual
+
+            const pedido = pedidos[currentIndex]; // Exibe o pedido atual
+
+            const orderCard = document.createElement('div');
+            orderCard.classList.add('order-card');
+
+            const orderInfo = document.createElement('div');
+            orderInfo.classList.add('order-info');
+            orderInfo.innerHTML = `
+                <h3>${pedido.nome}</h3>
+                <p>${pedido.descricao}</p>
+                <select>
+                    <option value="pendente" ${pedido.status === '0' ? 'selected' : ''}>Pendente</option>
+                    <option value="concluido" ${pedido.status === '1' ? 'selected' : ''}>Concluído</option>
+                </select>
+            `;
+
+            const orderImage = document.createElement('img');
+            orderImage.src = `/pedidos/${pedido.imagem}`;
+            orderImage.alt = pedido.nome;
+
+            orderCard.appendChild(orderInfo);
+            orderCard.appendChild(orderImage);
+            pedidosContainer.appendChild(orderCard);
+        }
+
+        function updateCarousel() {
+            const pedidos = data.pedidos_pendentes; // Usando a variável global `data`
+
+            const totalPedidos = pedidos.length;
+
+            prevBtn.disabled = currentIndex === 0; // Desativa o botão anterior se estiver no início
+            nextBtn.disabled = currentIndex >= totalPedidos - 1; // Desativa o botão próximo se estiver no final
+
+            if (totalPedidos > 0) {
+                renderPedidos(pedidos); // Renderiza o pedido atual
+            }
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCarousel();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < data.pedidos_pendentes.length - 1) {
+                currentIndex++;
+                updateCarousel();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', fetchDashboardData);
+
+        async function fetchDashboardData() {
+            try {
+                const token = localStorage.getItem("access_token");
+                if (!token) {
+                    alert("Por favor, faça login para acessar o dashboard.");
+                    window.location.href = "/massas-mias/"; // Redireciona para a página de login
+                    return;
+                }
+
+                const response = await fetch('http://localhost:8000/dashboard', {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erro ${response.status}: ${response.statusText}`);
+                }
+
+                data = await response.json();
+                console.log(data); // Adicione para ver o conteúdo recebido
+
+                document.getElementById('lucro_total').textContent = `R$ ${data.estatisticas.lucro_total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` || 'R$ 0,00';
+                document.getElementById('num_pedidos').textContent = data.estatisticas.numero_pedidos || 'N/A';
+                document.getElementById('num_pratos').textContent = data.estatisticas.numero_pratos || 'N/A';
+                document.getElementById('num_reservas').textContent = data.estatisticas.numero_reservas || 'N/A';
+                document.getElementById('num_usuarios').textContent = data.estatisticas.numero_usuarios || 'N/A';
+
+                updateCarousel(); // Atualiza a exibição do carrossel
+
+            } catch (error) {
+                console.error('Erro ao buscar os dados do dashboard:', error);
+            }
+        }
+
+        async function fetchLoggedUser() {
+            const token = localStorage.getItem("access_token");
+
+            if (!token) {
+                console.error("Token não encontrado. Redirecionando para a página de login.");
+                window.location.href = "/massas-mias/";
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:8000/usuarios/me/", {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+                    const adminNameElement = document.getElementById("adminName");
+
+                    if (adminNameElement) {
+                        adminNameElement.textContent = `${userData.nome}`;
+                    }
+                } else {
+                    console.error("Erro ao obter os dados do usuário. Redirecionando para a página de login.");
+                    localStorage.removeItem("access_token");
+                    window.location.href = "/massas-mias/";
+                }
+            } catch (error) {
+                console.error("Erro ao buscar os dados do usuário:", error);
+                localStorage.removeItem("access_token");
+                window.location.href = "/massas-mias/";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", fetchLoggedUser);
+
+        document.querySelector(".exit").addEventListener("click", async () => {
+            const token = localStorage.getItem("access_token");
+
+            // Verificar se o token está presente
+            if (!token) {
+                alert("Você já está deslogado.");
+                window.location.href = "/massas-mias/";
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:8000/usuarios/logout", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                // Se o logout for bem-sucedido
+                if (response.ok) {
+                    localStorage.removeItem("access_token");
+                    window.location.href = "/massas-mias/";
+                } else {
+                    console.error("Falha ao deslogar");
+                    alert("Erro ao deslogar. Tente novamente.");
+                }
+            } catch (error) {
+                console.error("Erro:", error);
+                alert("Erro ao processar o logout. Verifique sua conexão.");
+            }
+        });
+    </script>
+</body>
+
+</html>
