@@ -51,8 +51,9 @@
         document.addEventListener("DOMContentLoaded", function () {
             // Limpa o localStorage quando a página for carregada (se necessário)
             if (window.location.href === "/massas-mias") {
-                localStorage.clear();  // Limpa todo o localStorage
-            }
+                localStorage.removeItem("access_token");
+                localStorage.removeItem("tipo_usuario")
+                localStorage.removeItem("usuario_id")            }
 
             let token = ''; // Inicializa a variável do token
 

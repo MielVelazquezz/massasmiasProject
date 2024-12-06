@@ -98,33 +98,81 @@
         const nextBtn = document.querySelector('.next-btn');
 
         function renderPedidos(pedidos) {
-            const pedidosContainer = document.getElementById('pedidosContainer');
-            pedidosContainer.innerHTML = ''; // Limpa o conteúdo atual
+    const pedidosContainer = document.getElementById('pedidosContainer');
+    pedidosContainer.innerHTML = ''; // Limpa o conteúdo atual
 
-            const pedido = pedidos[currentIndex]; // Exibe o pedido atual
+    const pedido = pedidos[currentIndex]; // Exibe o pedido atual
 
-            const orderCard = document.createElement('div');
-            orderCard.classList.add('order-card');
+    const orderCard = document.createElement('div');
+    orderCard.classList.add('order-card');
 
-            const orderInfo = document.createElement('div');
-            orderInfo.classList.add('order-info');
-            orderInfo.innerHTML = `
-                <h3>${pedido.nome}</h3>
-                <p>${pedido.descricao}</p>
-                <select>
-                    <option value="pendente" ${pedido.status === '0' ? 'selected' : ''}>Pendente</option>
-                    <option value="concluido" ${pedido.status === '1' ? 'selected' : ''}>Concluído</option>
-                </select>
-            `;
+    const orderInfo = document.createElement('div');
+    orderInfo.classList.add('order-info');
+    orderInfo.innerHTML = `
+        <h3>${pedido.nome}</h3>
+        <p>${pedido.descricao}</p>
+        <select onchange="handleStatusChange(event, ${pedido.id})">
+            <option value="pendente" ${pedido.status === '0' ? 'selected' : ''}>Pendente</option>
+            <option value="concluido" ${pedido.status === '1' ? 'selected' : ''}>Concluído</option>
+        </select>
+    `;
 
-            const orderImage = document.createElement('img');
-            orderImage.src = `/pedidos/${pedido.imagem}`;
-            orderImage.alt = pedido.nome;
+    const orderImage = document.createElement('img');
+    orderImage.src = `/pedidos/${pedido.imagem}`;
+    orderImage.alt = pedido.nome;
 
-            orderCard.appendChild(orderInfo);
-            orderCard.appendChild(orderImage);
-            pedidosContainer.appendChild(orderCard);
+    orderCard.appendChild(orderInfo);
+    orderCard.appendChild(orderImage);
+    pedidosContainer.appendChild(orderCard);
+}
+
+async function handleStatusChange(event, pedidoId) {
+    const newStatus = event.target.value;
+
+    if (newStatus === 'concluido') {
+        const confirmacao = confirm('Tem certeza que deseja concluir este pedido?');
+        if (!confirmacao) {
+            // Reverte para o status anterior
+            event.target.value = 'pendente';
+            return;
         }
+
+        try {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                alert('Por favor, faça login para continuar.');
+                window.location.href = '/massas-mias/';
+                return;
+            }
+
+            const response = await fetch(`http://localhost:8000/pedidos/${pedidoId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ StatusPedido: 2 }),
+
+            });
+
+            if (response.ok) {
+                alert('Pedido concluído com sucesso!');
+                // Atualize os dados do pedido ou recarregue a lista, se necessário
+                fetchDashboardData();
+            } else {
+                alert('Erro ao concluir o pedido. Tente novamente.');
+                console.error('Erro na resposta:', await response.text());
+                event.target.value = 'pendente'; // Reverte a mudança de status
+            }
+        } catch (error) {
+            console.error('Erro ao concluir o pedido:', error);
+            alert('Erro ao processar o pedido. Verifique sua conexão.');
+            event.target.value = 'pendente'; // Reverte a mudança de status
+        }
+    }
+}
+
+
 
         function updateCarousel() {
             const pedidos = data.pedidos_pendentes; // Usando a variável global `data`

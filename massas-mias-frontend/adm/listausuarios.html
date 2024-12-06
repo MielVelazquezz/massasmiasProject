@@ -198,6 +198,7 @@
             usuariosTableBody.innerHTML = ''; // Limpa o corpo da tabela antes de carregar
 
             usuarios.usuarios.forEach(usuario => {
+                if(usuario.nome_usuario != "Visitante"){
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${usuario.nome_usuario}</td>
@@ -215,7 +216,9 @@
                     </td>
                 `;
                 usuariosTableBody.appendChild(row);
+                }
             });
+
 
             usuariosCount.textContent = usuarios.usuarios.length; // Atualiza o número de usuários
         }

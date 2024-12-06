@@ -481,17 +481,17 @@
             function pagarCarrinho() {
     // Verifique o tipo de usuário antes de prosseguir com o pagamento
     const tipoUsuario = localStorage.getItem("tipo_usuario"); // Obter o tipo de usuário do localStorage
-    
-    if (tipoUsuario === "3") {
-        // Exibir o modal de alerta
-        const modal = document.getElementById("visitorAlertModal");
-        modal.style.display = "block"; // Torna o modal visível
-        return; // Impede que o pagamento seja processado
-    }
+
 
     if (carrinho.length === 0) {
         alert("Seu carrinho está vazio. Adicione itens antes de pagar.");
         return;
+    }
+    if (tipoUsuario === '3') {
+        // Exibir o modal de alerta
+        const modal = document.getElementById("visitorAlertModal");
+        modal.style.display = "block"; // Torna o modal visível
+        return; // Impede que o pagamento seja processado
     }
 
     // Exibir animação de pagamento
@@ -584,6 +584,8 @@ document.getElementById("closeModalButton").addEventListener("click", function()
                     // Se o logout for bem-sucedido
                     if (response.ok) {
                         localStorage.removeItem("access_token");
+                        localStorage.removeItem("tipo_usuario")
+                        localStorage.removeItem("usuario_id")
                         window.location.href = "/massas-mias/";
                     } else {
                         console.error("Falha ao deslogar");
